@@ -3,21 +3,84 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cover Snap</title>
-<link rel="stylesheet" href="./style.css">
+<title>Leonida Grid — your photos, posted from Leonida</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<main class="app">
-  <section class="controls">
-    <h1>Cover Snap</h1>
-    <p>A photo and a caption, made into a square cover.</p>
-    <label>Photo <input id="photo" type="file" accept="image/*"></label>
-    <label>Caption <input id="caption" type="text" maxlength="40" value="Sunset Heist"></label>
-    <button id="export" type="button">Export PNG 1080 x 1080</button>
-    <p id="status" role="status"></p>
+<header class="masthead">
+  <div class="masthead-inner">
+    <h1>Leonida <span>Grid</span></h1>
+    <p class="tagline">Your photos, posted from Leonida — a GTA-style cover-art postcard maker.</p>
+  </div>
+</header>
+
+<main class="workspace">
+  <section class="stage-column">
+    <div id="stage-wrap">
+      <canvas id="stage" width="1200" height="900" aria-label="Postcard preview"></canvas>
+      <p class="drop-hint">Drop photos here</p>
+    </div>
+    <p class="privacy">Your photos never leave this device — everything is drawn locally, fully offline.</p>
+    <p class="hint">Click a panel to select it, drag inside a photo panel to reposition it, then set its zoom.</p>
   </section>
-  <canvas id="cover" width="1080" height="1080" aria-label="The cover"></canvas>
+
+  <aside class="controls" aria-label="Controls">
+    <section class="card">
+      <h2>Photos</h2>
+      <label class="file-button">
+        Add photos (1–6)
+        <input id="photo-input" type="file" accept="image/*" multiple hidden>
+      </label>
+      <div class="button-row">
+        <button type="button" id="sample-pier">Demo: the pier</button>
+        <button type="button" id="sample-boulevard">Demo: the boulevard</button>
+      </div>
+      <button type="button" id="reset-demo" class="wide">Reset demo scenes</button>
+    </section>
+
+    <section class="card">
+      <h2>Layout</h2>
+      <div class="button-grid" id="layout-bar"></div>
+    </section>
+
+    <section class="card">
+      <h2>Grade</h2>
+      <div class="button-grid" id="grade-bar"></div>
+    </section>
+
+    <section class="card">
+      <h2>Cover title</h2>
+      <input id="title-input" type="text" maxlength="26" value="LEONIDA GRID" aria-label="Cover title">
+      <input id="subtitle-input" type="text" maxlength="60" value="Greetings from the Leonida Keys" aria-label="Subtitle">
+      <div class="button-row" id="treatment-bar"></div>
+    </section>
+
+    <section class="card">
+      <h2>Selected panel</h2>
+      <label class="slider-line">Zoom
+        <input id="zoom" type="range" min="1" max="2.5" step="0.01" value="1">
+      </label>
+      <label class="check-line">
+        <input id="popout" type="checkbox">
+        Pop-out hero (frame-break)
+      </label>
+    </section>
+
+    <section class="card">
+      <h2>Export PNG</h2>
+      <div class="button-row">
+        <button type="button" data-export="1080x1080">Square 1080×1080</button>
+        <button type="button" data-export="1080x1350">Portrait 1080×1350</button>
+        <button type="button" data-export="1920x1080">Wide 1920×1080</button>
+      </div>
+    </section>
+  </aside>
 </main>
-<script type="module" src="./src/main.js"></script>
+
+<footer class="colophon">
+  <p>Leonida Grid Postcard Co. — printed locally in your browser. No uploads, no accounts, no network.</p>
+</footer>
+
+<script type="module" src="src/app.js"></script>
 </body>
 </html>

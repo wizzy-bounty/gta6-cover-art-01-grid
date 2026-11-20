@@ -11,10 +11,27 @@
 //   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
 // Two runs over the same tree produce byte-identical output.
 
-import { cpSync, existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-app.ts';
+
+// Copy a directory tree entry by entry in sorted name order, so the copy
+// order never depends on filesystem enumeration order.
+function copyDirSorted(srcDir, dstDir) {
+  mkdirSync(dstDir, { recursive: true });
+  const entries = readdirSync(srcDir, { withFileTypes: true })
+    .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+  for (const entry of entries) {
+    const src = join(srcDir, entry.name);
+    const dst = join(dstDir, entry.name);
+    if (entry.isDirectory()) {
+      copyDirSorted(src, dst);
+    } else {
+      copyFileSync(src, dst);
+    }
+  }
+}
 
 const repoDir = fileURLToPath(new URL('.', import.meta.url));
 const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
@@ -25,9 +42,9 @@ for (const entry of readdirSync(outDir)) {
   rmSync(join(outDir, entry), { recursive: true, force: true });
 }
 
-cpSync(join(repoDir, 'app'), join(outDir, 'app'), { recursive: true });
+copyDirSorted(join(repoDir, 'app'), join(outDir, 'app'));
 if (existsSync(join(repoDir, 'screenshots'))) {
-  cpSync(join(repoDir, 'screenshots'), join(outDir, 'screenshots'), { recursive: true });
+  copyDirSorted(join(repoDir, 'screenshots'), join(outDir, 'screenshots'));
 }
 
 // The gate's caps, passed whole so this program refuses exactly what the
